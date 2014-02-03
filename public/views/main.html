@@ -1,0 +1,38 @@
+<style type="text/css">
+
+
+	.t-bar {
+		height: 55px;
+	}
+	.columns {
+	width: auto;
+		-webkit-column-count: 4;
+		-webkit-column-gap: 0px;
+		-webkit-column-fill: auto;
+		-moz-column-count: 4;
+		-moz-column-gap: 0px;
+		-moz-column-fill: auto;
+		column-count: 4;
+		column-gap: 0px;
+		column-fill: auto;
+	}
+	.user-posts {
+		margin: 0 auto;
+		float: none;
+		width: 1200px;
+	}
+	#map-canvas {
+		opacity: 1;
+		height: 100%;
+	}
+</style>
+
+
+ <ul class="user-posts columns">
+  <li ng-repeat="post in posts">
+    <h1>{{post.title}}</h1>
+	<p class="post-content">{{post.content}}</p>
+	<img src="{{post.img}}" width="100%" >
+	<p class="post-date">{{post.date | date:'MM/dd/yyyy @ h:mma'}} | {{post.author}}</p>
+  </li>
+</ul>
