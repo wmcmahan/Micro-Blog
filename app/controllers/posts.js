@@ -32,7 +32,7 @@ exports.instaSocket = function(req, res) {
 
 	var host = 'api.instagram.com',
 		path = '/v1/users/self/feeds?access_token=',
-		token = '922680350.ea2f708.5cb1dd5f357d4db68aed558448b0ce3b';
+		token = '_token_';
 
 	http.get({ host: host, path: path + token, agent: false },
 
@@ -63,7 +63,7 @@ exports.instaSocket = function(req, res) {
 /**
  **  store instagram content
  **/
-exports.storeInstagram = function (req, res) {
+exports.storeInstagram = function (req, res, next) {
 
 	var article = new Article({
 		title: req.body.title,
@@ -79,14 +79,39 @@ exports.storeInstagram = function (req, res) {
 }
 
 
+
+exports.userInfo = function(req, res){
+	return res.render('index.html',{username: req.user.username });
+}
+
+
 /**
  **  create post
  **/
-exports.create = function (req, res) {
+exports.create = function (req, res, next) {
 
 	var imageLoc = null,
 		tmp_path = req.files.thumbnail.path,
 		target_path = './public/images/' + req.files.thumbnail.name;
+
+	// image upload
+	if(req.files.thumbnail.size != 0 ){
+
+		imageLoc = '/images/' + req.files.thumbnail.name;
+
+		// move the file
+		fs.rename(tmp_path, target_path, function(err) {
+
+			if (err) { throw err; }
+
+			// delete the temporary file
+			fs.unlink(tmp_path, function() {
+				if (err) throw err;
+				res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
+			});
+
+		});
+	};
 
 	var article = new Article({
 		id: req.user.id,
@@ -99,32 +124,11 @@ exports.create = function (req, res) {
 		img: imageLoc
 	});
 
-	// image upload
-	if(req.files.thumbnail.size != 0 ){
-
-		imageLoc = 'images/' + req.files.thumbnail.name;
-
-		// move the file
-		fs.rename(tmp_path, target_path, function(err) {
-
-			if (err) { throw err }
-
-			// delete the temporary file
-			fs.unlink(tmp_path, function() {
-
-				if (err) throw err;
-
-				res.send('File uploaded to: ' + target_path + ' - ' + req.files.thumbnail.size + ' bytes');
-
-			});
-		});
-	};
-
 	article.save(function(err){
 		if(err) return next(err);
 		else {
-		  res.json(article);
-		  return res.redirect('/account');
+			console.log(article);
+			return res.redirect('/account/' + req.user.username );
 		}
 	})
 }
@@ -135,7 +139,27 @@ exports.create = function (req, res) {
  **/
 exports.publicPosts = function(req, res) {
 
-	Article.find().sort({date: -1}).exec(function (err, docs) {
+	if (!req.isAuthenticated()) {
+
+		Article.find().sort({date: -1}).exec(function (err, docs) {
+			if(err) return next(err);
+			return res.json(docs);
+		})
+	} else {
+		Article.find({author:req.user.username}).sort({date: -1}).exec(function (err, docs) {
+			if(err) return next(err);
+			return res.json(docs);
+		})
+	}
+}
+
+
+/**
+ **  return all posts
+ **/
+exports.posts = function(req, res, next) {
+
+	Article.find({author:req.user.username}).sort({date: -1}).exec(function (err, docs) {
 		if(err) return next(err);
 		return res.json(docs);
 	})
@@ -143,11 +167,13 @@ exports.publicPosts = function(req, res) {
 
 
 /**
- **  return single post
+ **  return single posts
  **/
-exports.post = function(req, res) {
+exports.post = function(req, res, next) {
 
-	Article.findById(req.params.id, function (err, docs) {
+	var id =req.params.id;
+
+	Article.findById(id, function(err, docs) {
 		if(err) return next(err);
 		return res.json(docs);
 	})
@@ -157,7 +183,7 @@ exports.post = function(req, res) {
 /**
  **  get users articles
  **/
-exports.getUser = function (req, res) {
+exports.getUser = function (req, res, next) {
 
 	Article.find({author: req.user.username, title: req.query.q }, function (err, docs) {
 		if(err) return next(err);
@@ -169,16 +195,17 @@ exports.getUser = function (req, res) {
 /**
  **  edit post
  **/
-exports.editPost = function(req, res) {
+exports.editPost = function(req, res, next) {
 
-	var data = {
-		title: req.body.title,
-		content: req.body.content
-	};
+	var id = req.params.id,
+		title = req.body.title,
+		content = req.body.content;
 
-	Article.findByIdAndUpdate(req.params.id, {title: title, content: content }, function (err, docs) {
-		if(err) return next(err);
-		return res.json(docs);
+	Article.findOneAndUpdate({_id: id }, {title: title, content: content }, function (err, docs) {
+		if(err) { return next(err); }
+		else {
+			return res.json(docs);
+		}
 	})
 }
 
@@ -186,7 +213,7 @@ exports.editPost = function(req, res) {
 /**
  **  delete post
  **/
-exports.delPost = function(req, res) {
+exports.delPost = function(req, res, next) {
 
 	Article.findByIdAndRemove (req.params.id, function (err, docs) {
 		if(err) return next(err);

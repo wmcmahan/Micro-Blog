@@ -12,6 +12,7 @@ var express = require('express'),
     io = require('socket.io').listen(server);
 
 
+
 // middleware settings
 require('./config/express')(app, passport, path);
 
@@ -21,8 +22,8 @@ var database = require('./config/database');
 
 // connect db
 mongoose.connect(database.url, function (err, res) {
-  if (err) throw err;
-  console.log('Successfully connected');
+    if (err) throw err;
+    console.log('Successfully connected');
 });
 
 

@@ -13,11 +13,11 @@ module.exports = function(app, passport, path){
     app.use(express.favicon());
     app.use(express.logger('dev'));
     app.use(express.cookieParser());
-    app.use(express.bodyParser({uploadDir:'./uploads'}));
+    app.use(express.bodyParser());
     app.use(expressValidator());
     app.use(express.methodOverride());
     app.use(express.session({secret: 'secret'}));
-    app.use(express.static(path.join(__dirname, '../public')));
+    app.use(express.static(path.join(__dirname, '/../public')));
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);

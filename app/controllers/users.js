@@ -3,7 +3,7 @@
 // user model
 var mongoose = require('mongoose'),
 	passport = require('passport'),
-	user = require('../models/users');
+	User = require('../models/users');
 
 
 /**
@@ -22,7 +22,10 @@ exports.login = function (req, res, next) {
 
 		req.logIn(user, function(err) {
 			if (err) { return next(err); }
-			return res.redirect('/auth/instagram');
+
+			// !since no instagram id are set!
+			// return res.redirect('/auth/instagram');
+			return res.redirect('/account/' + req.user.username);
 		});
 
 	})(req, res, next);
@@ -41,7 +44,7 @@ exports.logout = function(req, res){
 /**
  **  register user
  **/
-exports.signup = function(req, res){
+exports.signup = function(req, res, next){
 
 	var errors = req.validationErrors(),
 		userName = req.sanitize('username', 'Invalid getparam').xss(),
@@ -52,7 +55,10 @@ exports.signup = function(req, res){
 
 	if(!errors) {
 		user.save(function(err){
-			if(err) { throw err }
+			if(err.code === 'E11000') {
+				console.log('err.code');
+			}
+			if(err) { console.log(err); }
 			else {
 				console.log(user);
 				res.redirect('/account');
@@ -65,9 +71,3 @@ exports.signup = function(req, res){
 }
 
 
-/**
- **  set title
- **/
-exports.showAccount = function(req, res) {
-  res.render('index.html', { title: 'welcome ' + req.user.username });
-}

@@ -8,16 +8,23 @@ var posts = require('../controllers/posts'),
 
 module.exports = function (app, passport){
 
+	function ensureAuthenticated(req, res, next) {
+		if (!req.isAuthenticated()) {
+			return res.send(401, 'User is not authorized');
+		}
+		else { return next(); }
+	}
+
 	// top level
 	app.post('/signup', user.signup );
 	app.post('/login', user.login );
 	app.get('/logout', user.logout );
-	app.get('/account', ensureAuthenticated, user.showAccount);
+	app.get('/account/:username', ensureAuthenticated, posts.userInfo);
 
 	// instagram auth
-	app.get('/auth/instagram', passport.authorize('instagram', { failureRedirect: '/account' }));
+	app.get('/auth/instagram', passport.authorize('instagram', { failureRedirect: '/' }));
 	app.get('/auth/instagram/callback', passport.authorize('instagram', { failureRedirect: '/login' }),
-		function(req, res) { res.redirect('/account');
+		function(req, res) { res.redirect('/account/' + req.user.username);
 	});
 
 	// get instagram challenge
@@ -25,20 +32,16 @@ module.exports = function (app, passport){
 	app.post('/callback', posts.instaSocket);
 
 	// endpoints
+	app.get('/api/v1/users/:username/get/:id', ensureAuthenticated, posts.post );
+	app.post('/api/v1/users/:username/update/:id', ensureAuthenticated, posts.editPost );
+	app.del('/api/v1/users/:username/delete/:id', ensureAuthenticated, posts.delPost );
+	app.get('/api/v1/users/:username', ensureAuthenticated, posts.posts );
+
 	app.get('/api/v1/users', posts.publicPosts );
 	app.post('/api/v1/users', ensureAuthenticated, posts.create );
 	app.post('/api/v1/users/instagram', ensureAuthenticated, posts.storeInstagram );
 	app.post('/api/v1/users/:username', ensureAuthenticated, posts.create );
 
-	app.get('/api/v1/users/:username/get/:id', ensureAuthenticated, posts.post );
-	app.put('/api/v1/users/:username/update/:id', ensureAuthenticated, posts.editPost );
-	app.del('/api/v1/users/:username/delete/:id', ensureAuthenticated, posts.delPost );
-
-	app.get('*', routes.index);
-
-	function ensureAuthenticated(req, res, next) {
-	  if (req.isAuthenticated()) { return next(); }
-	  res.redirect('/login')
-	}
+	app.all('*', routes.index);
 
 }

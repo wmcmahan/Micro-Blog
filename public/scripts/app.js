@@ -6,10 +6,10 @@ angular.module('trekApp', [
 	'trekApp.directives',
 	'ngResource',
 	'ngRoute',
-	'ngCookies'
+	'ngAnimate'
 ])
 
-.config(function ($locationProvider, $routeProvider) {
+.config(function ($locationProvider, $routeProvider ) {
 
 	$locationProvider.html5Mode(true);
 
@@ -19,29 +19,36 @@ angular.module('trekApp', [
 		})
 		.when('/register', {
 			templateUrl: '/views/signup.html',
-			controller: 'articleCtrl'
-		})
-		.when('/account', {
-			templateUrl: '/views/account.html',
-			controller: 'articleCtrl'
+			animate: 'post-view'
 		})
 		.when('/login', {
 			templateUrl: '/views/login.html',
-			controller: 'articleCtrl'
+			animate: 'post-view'
 		})
-		.when('/:user/posts', {
+		.when('/account/:user', {
 			templateUrl: '/views/account.html',
-			controller: 'listArticleCtrl'
+			controller: 'userArticleCtrl'
 		})
-		.when('/:user/posts/:id', {
-			templateUrl: '/views/account.html',
-			controller: 'editArticleCtrl'
+		.when('/account/:use/map', {
+			templateUrl: '/views/map.html',
+			// controller: 'mapCtrl',
+			animate: 'post-view'
 		})
-		.when('/:user/posts/delete/:id', {
+		.when('/account/:use/post', {
+			templateUrl: '/views/takenote.html',
+			controller: 'postArticleCtrl',
+			animate: 'post-view'
+		})
+		.when('/account/:user/posts/:id', {
+			templateUrl: '/views/takenote.html',
+			controller: 'editArticleCtrl',
+			animate: 'post-view'
+		})
+		.when('/account/:user/posts/delete/:id', {
 			templateUrl: '/views/account.html',
 			controller: 'delArticleCtrl'
 		})
 		.otherwise({
-		  redirectTo: '/'
+			redirectTo: '/'
 		});
 });

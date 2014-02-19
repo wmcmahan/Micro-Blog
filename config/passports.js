@@ -11,6 +11,8 @@ var mongoose = require('mongoose'),
     // user model
 	User = require('../app/models/users');
 
+	var userName;
+
 
 module.exports = function(passport){
 
@@ -18,6 +20,7 @@ module.exports = function(passport){
 	 **  serialize/deserialize
 	 **/
 	passport.serializeUser(function(user, done) {
+		userName = user.name;
 		return done(null, user.id);
 	});
 
@@ -34,12 +37,10 @@ module.exports = function(passport){
 	passport.use(new LocalStrategy(function(username, password, done) {
 
 		User.findOne({ username: username }, function(err, user) {
-
 			if(err) { return done(err); }
 			if(!user) { return done(null, false, { message: 'Unknown user ' + username }) }
 
 			user.comparePassword(password, function(err, isMatch) {
-
 				if(err) { return done(err) }
 				if(isMatch) { return done(null, user) }
 				else {
@@ -60,6 +61,9 @@ module.exports = function(passport){
 			callbackURL: auths.instagram.callBackURL
 		},
 		function(req, token, tokenSecret, profile, done) {
+			User.update({author: userName }, {$set: {'auths.instagram.token': tokenSecret.access_token, 'auths.instagram.userID': profile.id }}, function (err, doc) {
+				if(err) { return next(err); }
+			});
 			return done(null, profile);
 		}
 	));

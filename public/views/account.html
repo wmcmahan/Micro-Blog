@@ -1,44 +1,17 @@
-<style type="text/css">
-	#map-canvas {
-		height: 100%;
-		width: 70%;
-		right: 0;
-		position: fixed;
-	};
-</style>
+<!-- top bar -->
+<div class="t-bar" >
+    <a href="/" class="logo"></a>
+    <div class="user-info">
+        <a ng-href="/account/{{posts[0].author}}" class="glyphicon glyphicon-user"></a>
+        <a ng-href="/account/{{posts[0].author}}/map" class="glyphicon glyphicon-map-marker" ></a>
+        <a ng-href="/account/{{posts[0].author}}/post" class="glyphicon glyphicon-pencil"></a>
+    </div>
+</div>
 
-<div class="left-bar" >
-	<div class="post-bar" >
+<!-- posts display -->
+<ul class="user-posts columns" >
+	<li ng-class='{post:$first}' ng-repeat="post in posts" >
 
-		<div class="user-display">
-			<span>{{posts[0].author}}</span>
-			<a href="#">will_mcmahan</a>
-		</div>	
-
-		<!-- <form> -->
-		<form method="post" enctype="multipart/form-data" action="/api/v1/users" >
-			<p>
-				<input type="text" name="title" ng-model="form.title" placeholder="title">
-			</p>
-			<p>
-				<textarea rows="10" cols="30"  name="content" ng-model="form.content" placeholder="notes"></textarea>
-			</p>
-			<p>
-				<input type="file" name="thumbnail" onchange="angular.element(this).scope().uploadFile(this.files)" >
-			</p>
-				
-			<p><i class="glyphicon glyphicon-map-marker"></i>{{form.city}}</p>
-
-			<p ng-switch on="need" >
-				<button ng-switch-when="editit" value="" ng-click="editPost()" class="btn btn-primary" >Edit</button>
-				<button ng-switch-default type="submit" id="send"  value="send" ng-click="addPost()" class="btn btn-primary">Take Note</button>
-			</p>	
-		</form>
-	</div>	
-</div>	
-
-<ul class="user-posts columns">
-	<li ng-repeat="post in posts">
 		<h1>{{post.title}}</h1>
 		<p class="post-content">{{post.content}}</p>
 		<img src="{{post.img}}" width="100%" >
@@ -46,10 +19,9 @@
 
 		<!-- post details -->
 		<div class="post-details">
-			<a class="glyphicon glyphicon-edit" ng-href="/{{post.author}}/posts/{{post._id}}"></a> 
-			<a class="glyphicon glyphicon-remove" ng-href="/{{post.author}}/posts/delete/{{post._id}}"></a>
-		</div>	
-		
+			<a class="glyphicon glyphicon-edit" ng-href="/account/{{post.author}}/posts/{{post._id}}"></a>
+			<a class="glyphicon glyphicon-remove" ng-href="/account/{{post.author}}/posts/delete/{{post._id}}"></a>
+		</div>
+
 	</li>
-</ul>	
-		
+</ul>

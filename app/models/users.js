@@ -10,6 +10,12 @@ var mongoose = require('mongoose')
 var UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true},
+    auths: {
+      instagram: {
+        token: String,
+        userID: String
+      }
+    }
 });
 
 

@@ -1,0 +1,35 @@
+<div class="post-bar" >
+
+	<!-- <form> -->
+	<form method="post" enctype="multipart/form-data" action="/api/v1/users" >
+
+		<div class="user-display">
+			<a ng-href="/account/{{posts[0].author}}" class="user">{{posts[0].author}}</a>
+			<input type="file" name="thumbnail" class="file-input">
+			<a ng-click="showMap=!showMap" class="local-opt glyphicon glyphicon-map-marker" ></a>
+		</div>
+
+		<p><input type="text" name="title" ng-model="form.title" placeholder="title"></p>
+		<p><textarea rows="10" cols="30"  name="content" ng-model="form.content" placeholder="notes"></textarea></p>
+		<p class="current-location">{{form.city}}</p>
+
+		<p ng-switch on="need" >
+			<span ng-switch-when="editit" value="Edit" ng-click="editPost()" class="submit-btn btn btn-primary" >
+				<i class="glyphicon glyphicon-plus"></i>
+			</span>
+			<button ng-switch-default type="submit" id="send"  value="send" ng-click="addPost()" class="submit-btn btn btn-primary">
+				<i class="glyphicon glyphicon-plus"></i>
+			</button>
+		</p>
+
+		<input type="hidden" name="latitude" value="{{form.latitude}}">
+		<input type="hidden" name="longitude" value="{{form.longitude}}">
+		<input type="hidden" name="city" value="{{form.city}}">
+	</form>
+
+	<!-- bottom options -->
+	<div class="post-options" ng-show="showMap">
+		<div map id="map-canvas" marker="form" ></div>
+	</div>
+
+</div>
