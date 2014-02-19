@@ -1,6 +1,6 @@
 'use strict';
 
-// unit: Serice: UserPosts
+// unit: Service: UserPosts
 describe('Service: UserPosts', function () {
 
     var scope, ctrl, httpMock, testService;
