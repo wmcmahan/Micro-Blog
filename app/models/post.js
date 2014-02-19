@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema
 
 
-// Shema
+// Shcema
 var ArticleSchema =  new Schema({
     title: { type: String, required: true },
     content: String,
