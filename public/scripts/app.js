@@ -29,12 +29,12 @@ angular.module('trekApp', [
 			templateUrl: '/views/account.html',
 			controller: 'userArticleCtrl'
 		})
-		.when('/account/:use/map', {
+		.when('/account/:user/map', {
 			templateUrl: '/views/map.html',
 			// controller: 'mapCtrl',
 			animate: 'post-view'
 		})
-		.when('/account/:use/post', {
+		.when('/account/:user/post', {
 			templateUrl: '/views/takenote.html',
 			controller: 'postArticleCtrl',
 			animate: 'post-view'
