@@ -50,7 +50,7 @@ describe('Service: geolocation', function () {
 
 
     it('should set form scopes', function () {
-        _geolocation.position().then(function(currentLocation){
+        _geolocation.position().then(function (currentLocation){
             result = currentLocation;
         });
 

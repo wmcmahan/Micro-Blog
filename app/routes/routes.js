@@ -4,13 +4,14 @@ var posts = require('../controllers/posts'),
     routes = require('../controllers/index'),
     user = require('../controllers/users');
 
-module.exports = function (app, passport){
+module.exports = function (app, passport) {
 
-    function ensureAuthenticated(req, res, next) {
+    function ensureAuthenticated (req, res, next) {
         if (!req.isAuthenticated()) {
             return res.send(401, 'User is not authorized');
+        } else {
+            return next();
         }
-        else { return next(); }
     }
 
     // top level

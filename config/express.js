@@ -3,9 +3,9 @@
 var express = require('express'),
     expressValidator = require('express-validator');
 
-module.exports = function(app, passport, path){
+module.exports = function (app, passport, path) {
 
-    app.configure(function(){
+    app.configure(function () {
         app.set('port', process.env.PORT || 3000);
         app.set('view engine', 'ejs');
         app.engine('html', require('ejs').renderFile);

@@ -1,6 +1,5 @@
 'use strict';
 
-
 var mongoose = require('mongoose'),
     LocalStrategy = require('passport-local').Strategy,
     InstagramStrategy = require('passport-instagram').Strategy,
@@ -9,56 +8,64 @@ var mongoose = require('mongoose'),
 
 var userName;
 
-module.exports = function(passport){
+module.exports = function (passport) {
 
     /**
-     **  serialize/deserialize
-     **/
-    passport.serializeUser(function(user, done) {
+     *  serialize/deserialize
+     */
+
+    passport.serializeUser(function (user, done) {
         userName = user.name;
         return done(null, user.id);
     });
 
-    passport.deserializeUser(function(id, done) {
+    passport.deserializeUser(function (id, done) {
         User.findById(id, function (err, user) {
             return done(err, user);
         });
     });
 
     /**
-     **  local strategy
-     **/
-    passport.use(new LocalStrategy(function(username, password, done) {
+     * local strategy
+     */
 
-        User.findOne({ username: username }, function(err, user) {
-            if(err) { return done(err); }
-            if(!user) { return done(null, false, { message: 'Unknown user ' + username }) }
+    passport.use(new LocalStrategy(function (username, password, done) {
 
-            user.comparePassword(password, function(err, isMatch) {
-                if(err) { return done(err) }
-                if(isMatch) { return done(null, user) }
-                else {
+        User.findOne({ username: username }, function (err, user) {
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                return done(null, false, { message: 'Unknown user ' + username });
+            }
+
+            user.comparePassword(password, function (err, isMatch) {
+                if (err) {
+                    return done(err);
+                }
+                if (isMatch) {
+                    return done(null, user)
+                } else {
                     return done(null, false, { message: 'Invalid password' });
                 }
             });
-
         });
     }));
 
     /**
-     **  Instagram strategy
-     **/
+     * Instagram strategy
+     */
+
     passport.use(new InstagramStrategy({
             clientID: auths.instagram.clientID,
             clientSecret: auths.instagram.clientSecret,
             callbackURL: auths.instagram.callBackURL
         },
-        function(req, token, tokenSecret, profile, done) {
+        function (req, token, tokenSecret, profile, done) {
             User.update({author: userName }, {$set: {'auths.instagram.token': tokenSecret.access_token, 'auths.instagram.userID': profile.id }}, function (err, doc) {
-                if(err) { return next(err); }
+                if (err) { return next(err); }
             });
             return done(null, profile);
         }
     ));
-
 }
