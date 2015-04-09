@@ -1,6 +1,5 @@
 var mongoose = require('mongoose'),
-	Schema = mongoose.Schema
-
+    Schema = mongoose.Schema
 
 // Shcema
 var ArticleSchema =  new Schema({
@@ -13,7 +12,6 @@ var ArticleSchema =  new Schema({
     latitude: Number,
     city: String
 })
-
 
 // Register
 module.exports = mongoose.model('Article', ArticleSchema);

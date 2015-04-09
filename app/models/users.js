@@ -1,23 +1,21 @@
-var mongoose = require('mongoose')
-  , bcrypt = require('bcrypt')
-  , Schema = mongoose.Schema
-  , SALT_WORK_FACTOR = 10
-  , passport = require('passport')
-  , LocalStrategy = require('passport-local').Strategy;
-
+var mongoose = require('mongoose'),
+    bcrypt = require('bcrypt'),
+    Schema = mongoose.Schema,
+    SALT_WORK_FACTOR = 10,
+    passport = require('passport'),
+    LocalStrategy = require('passport-local').Strategy;
 
   // User Schema
 var UserSchema = new Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true},
     auths: {
-      instagram: {
-        token: String,
-        userID: String
-      }
+        instagram: {
+            token: String,
+            userID: String
+        }
     }
 });
-
 
 // Bcrypt middleware
 UserSchema.pre('save', function(next) {
@@ -40,7 +38,6 @@ UserSchema.pre('save', function(next) {
         });
     });
 });
-
 
 // Password verification
 UserSchema.methods.comparePassword = function(candidatePassword, cb) {
